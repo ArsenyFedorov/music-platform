@@ -1,0 +1,14 @@
+[project]
+name = "music-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.20.0",
+    "asyncpg",
+    "fastapi>=0.141.1",
+    "pydantic-settings>=2.15.0",
+    "sqlalchemy",
+    "uvicorn>=0.53.0",
+]

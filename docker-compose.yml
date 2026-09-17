@@ -1,0 +1,20 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"     
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/musick_platform
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: musick_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
