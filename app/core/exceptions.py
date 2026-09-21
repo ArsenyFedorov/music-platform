@@ -17,3 +17,13 @@ class UsernameAlreadyExistsError(AppError):
     """Конфликт имён"""
 
     status_code = 409
+
+class InvalidCredentialsError(AppError):
+    """Ошибка аунтефикации"""
+
+    status_code = 401
+
+class InvalidTokenError(AppError):
+    """Недействительный JWT"""
+    
+    status_code = 401

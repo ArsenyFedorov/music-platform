@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, IdMixin
@@ -7,6 +7,17 @@ from app.db.base import Base, IdMixin
 class User(IdMixin, Base):
     __tablename__ = "users"
 
-    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-    username: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    __table_args__ =(
+        UniqueConstraint(
+        "email",
+        name="uq_users_email",
+    ),
+    UniqueConstraint(
+        "username",
+        name="uq_users_username",
+    ),
+    )
+
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    username: Mapped[str] = mapped_column(String(255), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)

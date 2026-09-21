@@ -7,6 +7,8 @@ class Settings(BaseSettings):
         env_file=".env"
     )
     database_url: str
+    jwt_secret: str
+    access_token_expire_minutes: int = 30
 
 @lru_cache
 def get_settings() -> Settings:

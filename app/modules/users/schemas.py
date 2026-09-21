@@ -12,3 +12,7 @@ class UserRead(BaseModel):
     id: UUID
     email: EmailStr
     username: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
