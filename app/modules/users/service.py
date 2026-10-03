@@ -1,11 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
+
 from app.modules.users.repository import UserRepository
 from app.modules.users.schemas import UserCreate, UserLogin
 from app.modules.users.models import User
 from app.core.exceptions import EmailAlreadyExistsError, UsernameAlreadyExistsError, InvalidCredentialsError
-from app.core.security import hash_password, verify_password
+from app.core.security import hash_password, verify_password, create_access_token
+
 
 
 
@@ -50,13 +52,14 @@ class UserService:
         return user
 
 
-    async def login(self, data: UserLogin) -> User:
+    async def login(self, data: UserLogin) -> str:
         user = await self.user_repository.get_by_email(data.email)
 
         if not user:
             raise InvalidCredentialsError(detail="НЕПРАВИЛЬНЫЙ EMAIL ИЛИ PASSWORD")
         
-        if verify_password(data.password, user.password_hash):
-            ...
-        else:
+        if not verify_password(data.password, user.password_hash):
             raise InvalidCredentialsError(detail="НЕПРАВИЛЬНЫЙ EMAIL ИЛИ PASSWORD")
+        
+        return create_access_token(user.id)
+            

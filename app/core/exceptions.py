@@ -27,3 +27,15 @@ class InvalidTokenError(AppError):
     """Недействительный JWT"""
     
     status_code = 401
+
+
+class NotFoundError(AppError):
+    """Нет данных"""
+
+    status_code = 404
+
+
+class InvalidTokenError(AppError):
+    """Неверный JWT"""
+
+    status_code = 400

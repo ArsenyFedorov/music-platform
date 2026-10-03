@@ -3,12 +3,20 @@ from fastapi import Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.users.models import User
+
 from app.db.base import Base
+from app.modules.users.routers import router
+from app.core.exceptions import AppError
+from app.core.exception_handlers import app_exception_handler
 
 from app.db.session import get_db_session
 
 app = FastAPI()
+
+app.include_router(router)
+app.add_exception_handler(AppError, app_exception_handler)
+app.add_exception_handler(AppError, app_exception_handler)
+
 
 
 @app.get("/")
