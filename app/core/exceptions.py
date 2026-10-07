@@ -18,6 +18,11 @@ class UsernameAlreadyExistsError(AppError):
 
     status_code = 409
 
+class FollowerAlreadeExistsError(AppError):
+    """Конфлитк подписчкиков"""
+
+    status_code = 409
+
 class InvalidCredentialsError(AppError):
     """Ошибка аунтефикации"""
 
@@ -34,8 +39,3 @@ class NotFoundError(AppError):
 
     status_code = 404
 
-
-class InvalidTokenError(AppError):
-    """Неверный JWT"""
-
-    status_code = 400

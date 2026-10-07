@@ -15,7 +15,7 @@ app = FastAPI()
 
 app.include_router(router)
 app.add_exception_handler(AppError, app_exception_handler)
-app.add_exception_handler(AppError, app_exception_handler)
+
 
 
 
