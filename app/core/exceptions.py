@@ -23,6 +23,11 @@ class FollowerAlreadeExistsError(AppError):
 
     status_code = 409
 
+class ArtistNameAlreadeExistsError(AppError):
+    """Конфлитк имён артиста"""
+
+    status_code = 409
+
 class InvalidCredentialsError(AppError):
     """Ошибка аунтефикации"""
 
