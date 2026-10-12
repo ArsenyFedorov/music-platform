@@ -1,11 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 from uuid import UUID
 
 
 from app.modules.artist.repository import ArtistRepository
 from app.modules.artist.schemas import ArtistCreate
 from app.modules.artist.models import Artist, ArtistFollower
-from app.core.exceptions import NotFoundError, FollowerAlreadeExistsError
+from app.core.exceptions import NotFoundError, FollowerAlreadeExistsError, ArtistNameAlreadeExistsError
 from app.modules.users.repository import UserRepository
 
 
@@ -27,6 +28,15 @@ class ArtistService:
         )
 
         self.artist_repository.create_artist(artist=artist)
+
+        try:
+            await self.session.flush()
+        except IntegrityError as exc:
+            await self.session.rollback()
+            if "uq_artists_name" in str(exc.orig):
+                raise ArtistNameAlreadeExistsError(detail="Артист с таким именем уже существует")
+            
+            raise
         
         await self.session.flush()
         await self.session.commit()
