@@ -55,3 +55,5 @@ class ArtistRepository:
         )
 
         return await self.session.scalar(stmt) or 0
+
+    

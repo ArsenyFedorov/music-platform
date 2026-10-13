@@ -30,16 +30,15 @@ class ArtistService:
         self.artist_repository.create_artist(artist=artist)
 
         try:
-            await self.session.flush()
+            await self.session.commit()
         except IntegrityError as exc:
             await self.session.rollback()
             if "uq_artists_name" in str(exc.orig):
                 raise ArtistNameAlreadeExistsError(detail="Артист с таким именем уже существует")
-            
-            raise
+            else:
+                raise
         
-        await self.session.flush()
-        await self.session.commit()
+        
 
         return artist
 
@@ -81,6 +80,15 @@ class ArtistService:
 
         self.artist_repository.follow_artist(follower=follower)
 
+        try:
+            await self.session.commit()
+        except IntegrityError as exc:
+            await self.session.rollback()
+            if "uq_artist_followers_artist_id_user_id" in str(exc.orig):
+                raise FollowerAlreadeExistsError(detail="YOU FOLLOW THIS ARTIST")
+            else:
+                raise
+                
         await self.session.commit()
 
 
