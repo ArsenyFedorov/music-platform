@@ -9,6 +9,8 @@ from alembic import context
 from app.core.config import get_settings
 from app.db.base import Base
 from app.modules.users.models import User
+from app.modules.artist.models import Artist, ArtistFollower
+from app.modules.tracks.models import Track
 
 
 
