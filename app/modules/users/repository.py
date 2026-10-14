@@ -33,3 +33,7 @@ class UserRepository:
 
     def create_user(self, user: User) -> None:
         self.session.add(user)
+
+
+    async def delete(self, user: User) -> None:
+        await self.session.delete(user)
