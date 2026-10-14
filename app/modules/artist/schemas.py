@@ -12,3 +12,8 @@ class ArtistRead(BaseModel):
     name: str
     description: str | None 
     followers: int
+
+
+class ArtistUpdate(BaseModel):
+    name: str | None = Field(min_length=3, max_length=255, default=None)
+    description: str | None = Field(default=None, max_length=1_000)

@@ -17,6 +17,14 @@ class ArtistRepository:
         
         return await self.session.scalar(query)
 
+
+
+    async def get_artist_by_name(self, artist_name: str) -> Artist | None:
+        query = select(Artist).where(Artist.name == artist_name)
+        return await self.session.scalar(query)
+
+
+
     async def get_artists(self, limit: int = 100, offset: int = 0) -> list[Artist]:
         query = select(Artist).order_by(Artist.name).limit(limit).offset(offset)
         result = await self.session.execute(query)
@@ -56,4 +64,6 @@ class ArtistRepository:
 
         return await self.session.scalar(stmt) or 0
 
+    async def delete(self, artist: Artist) -> None:
+        await self.session.delete(artist)
     
