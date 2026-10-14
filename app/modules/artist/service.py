@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 from app.modules.artist.repository import ArtistRepository
-from app.modules.artist.schemas import ArtistCreate
+from app.modules.artist.schemas import ArtistCreate, ArtistUpdate
 from app.modules.artist.models import Artist, ArtistFollower
 from app.core.exceptions import NotFoundError, FollowerAlreadeExistsError, ArtistNameAlreadeExistsError
 from app.modules.users.repository import UserRepository
@@ -21,7 +21,19 @@ class ArtistService:
         self.user_repository = UserRepository(session=session)
 
 
+    def is_none(self, new_arg, old_arg):
+            if new_arg is not None:
+                return new_arg
+    
+            return old_arg
+
+
     async def create_artist(self, data: ArtistCreate) -> Artist:
+        name_existing = self.artist_repository.get_artist_by_name(data.name)
+        if name_existing is not None:
+            raise ArtistNameAlreadeExistsError("ARTIST WITH THAT NAME ALREADY EXISTS")
+
+
         artist = Artist(
             name=data.name,
             description=data.description,
@@ -34,7 +46,7 @@ class ArtistService:
         except IntegrityError as exc:
             await self.session.rollback()
             if "uq_artists_name" in str(exc.orig):
-                raise ArtistNameAlreadeExistsError(detail="Артист с таким именем уже существует")
+                raise ArtistNameAlreadeExistsError(detail="ARTIST WITH THAT NAME ALREADY EXISTS")
             else:
                 raise
         
@@ -113,6 +125,30 @@ class ArtistService:
 
         followers_count = await self.artist_repository.get_artist_followers_count(artist_id=artist_id)
         return followers_count
+
+
+    async def update(self, artist_id: UUID, data: ArtistUpdate) -> Artist:
+        name_existing = self.artist_repository.get_artist_by_name(artist_name=data.name)
+        if name_existing is not None:
+            raise ArtistNameAlreadeExistsError("ARTIST WITH THAT NAME ALREADY EXISTS")
+
+        artist = await self.get_artist(artist_id=artist_id)
+        artist.name = self.is_none(data.name, artist.name)
+        artist.description = self.is_none(data.description, artist.description)
+
+        await self.session.commit()
+        await self.session.refresh(artist)
+
+        return artist
+
+
+
+    async def delete(self, artist_id: UUID) -> None:
+        artist = await self.get_artist(artist_id=artist_id)
+
+        await self.artist_repository.delete(artist)
+        await self.session.commit()
+
 
         
 

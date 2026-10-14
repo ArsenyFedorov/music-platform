@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 
-from app.modules.artist.schemas import ArtistCreate, ArtistRead
+from app.modules.artist.schemas import ArtistCreate, ArtistRead, ArtistUpdate
 from app.modules.artist.service import ArtistService
 from app.modules.artist.dependencies import get_artist_service
 from app.modules.users.models import User
@@ -95,5 +95,27 @@ async def get_followers_count(
 ) -> int:
 
     return await artist_service.get_artist_followers_count(artist_id=artist_id)
+
+
+
+@router.patch("/{artist_id}", response_model=ArtistRead)
+async def update_artist(
+    data: ArtistUpdate,
+    artist_id: UUID,
+    _: User = Depends(get_current_user),
+    artist_service: ArtistService = Depends(get_artist_service)
+) -> ArtistRead:
+    artist = await artist_service.update(artist_id=artist_id, data=data)
+    return ArtistRead.model_validate(artist)
+
+
+
+@router.delete("/{artist_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_artist(
+    artist_id: UUID,
+    _: User = Depends(get_current_user),
+    artist_service: ArtistService = Depends(get_artist_service)
+) -> None:
+    await artist_service.delete(artist_id=artist_id)
 
     
