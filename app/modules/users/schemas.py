@@ -14,5 +14,10 @@ class UserRead(BaseModel):
     username: str
 
 class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=255)
+
+
+class UserUpdate(BaseModel):
+    username: str | None = Field(min_length=3, max_length=255, default=None)
+    password: str | None = Field(min_length=8, max_length=255, default=None)
