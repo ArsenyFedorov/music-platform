@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 from app.modules.artist.repository import ArtistRepository
-from app.modules.artist.schemas import ArtistCreate, ArtistUpdate
+from app.modules.artist.schemas import ArtistCreate, ArtistUpdate, ArtistsRead
 from app.modules.artist.models import Artist, ArtistFollower
 from app.core.exceptions import NotFoundError, FollowerAlreadeExistsError, ArtistNameAlreadeExistsError
 from app.modules.users.repository import UserRepository
@@ -29,7 +29,7 @@ class ArtistService:
 
 
     async def create_artist(self, data: ArtistCreate) -> Artist:
-        name_existing = self.artist_repository.get_artist_by_name(data.name)
+        name_existing = await self.artist_repository.get_artist_by_name(data.name)
         if name_existing is not None:
             raise ArtistNameAlreadeExistsError("ARTIST WITH THAT NAME ALREADY EXISTS")
 
@@ -63,8 +63,8 @@ class ArtistService:
 
         return artist
 
-    async def get_artists(self) -> list[Artist]:
-        artist_list = await self.artist_repository.get_artists()
+    async def get_artists(self, data: ArtistsRead) -> list[Artist]:
+        artist_list = await self.artist_repository.get_artists(data.limit, data.ofset)
 
         return artist_list
     
@@ -101,7 +101,6 @@ class ArtistService:
             else:
                 raise
                 
-        await self.session.commit()
 
 
     async def unfollow_artist(self, user_id: UUID, artist_id: UUID) -> None:
@@ -128,7 +127,7 @@ class ArtistService:
 
 
     async def update(self, artist_id: UUID, data: ArtistUpdate) -> Artist:
-        name_existing = self.artist_repository.get_artist_by_name(artist_name=data.name)
+        name_existing = await self.artist_repository.get_artist_by_name(artist_name=data.name)
         if name_existing is not None:
             raise ArtistNameAlreadeExistsError("ARTIST WITH THAT NAME ALREADY EXISTS")
 

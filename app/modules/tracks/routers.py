@@ -32,7 +32,7 @@ async def get_tracks(
     return [TrackRead.model_validate(track) for track in tracks]
 
 
-@router.post("", response_model=TrackRead)
+@router.post("", response_model=TrackRead, status_code=status.HTTP_201_CREATED)
 async def create_track(
     data: TrackCreate,
     _: User = Depends(get_current_user),

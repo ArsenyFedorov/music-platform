@@ -17,3 +17,8 @@ class ArtistRead(BaseModel):
 class ArtistUpdate(BaseModel):
     name: str | None = Field(min_length=3, max_length=255, default=None)
     description: str | None = Field(default=None, max_length=1_000)
+
+
+class ArtistsRead(BaseModel):
+    limit: int | None = Field(gt=0, default=100)
+    ofset: int | None = Field(gt=0, default=0)

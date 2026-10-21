@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 
-from app.modules.artist.schemas import ArtistCreate, ArtistRead, ArtistUpdate
+from app.modules.artist.schemas import ArtistCreate, ArtistRead, ArtistUpdate, ArtistsRead
 from app.modules.artist.service import ArtistService
 from app.modules.artist.dependencies import get_artist_service
 from app.modules.users.models import User
@@ -12,7 +12,7 @@ from app.modules.users.dependencies import get_current_user
 router = APIRouter(prefix="/artists", tags=["artists"])
 
 
-@router.post("", response_model=ArtistRead)
+@router.post("", response_model=ArtistRead, status_code=status.HTTP_201_CREATED)
 async def create_artist(
     data: ArtistCreate,
     artist_service: ArtistService = Depends(get_artist_service)
@@ -50,9 +50,10 @@ async def get_artist(
 
 @router.get("", response_model=list[ArtistRead])
 async def get_artists(
+    data: ArtistsRead,
     artist_service: ArtistService = Depends(get_artist_service)
 ) -> list[ArtistRead]:
-    artists = await artist_service.get_artists()
+    artists = await artist_service.get_artists(data)
     followers = [await artist_service.get_artist_followers_count(artist.id) for artist in artists]
 
     responce_data = []
